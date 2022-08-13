@@ -25,32 +25,60 @@
           </span>
         </span>
       </span>
-      <NuxtLink
-        v-else
-        :key="index"
-        class="nav-section__link"
-        :class="{
-          'nav-section__link--has-img': $helpers.resolvePath(item, propertyImage, null),
-          'nav-section__link--has-img': $helpers.resolvePath(item, propertyCategory, null),
-          'nav-section__link--locked': $helpers.resolvePath(item, propertyLocked, null),
-          'nav-section__link--chevron': propertyChevron
-        }"
-        :style="[
-          (propertyImage) ? { backgroundImage: `url(${$helpers.normalizeImageUrl($helpers.resolvePath(item, propertyImage, null))})` } : undefined,
-          (propertyCategory) ? { backgroundImage: `url(${$helpers.getImageCategory($helpers.resolvePath(item, propertyCategory, null))})` } : undefined
-        ]"
-        :to="(!propertyRawLink) ? $helpers.getContentRoute(item, isNotification) : item.to"
-        :target="(propertyTargetLink && (item.target !== undefined)) ? item.target : undefined"
-      >
-        <span class="nav-section__link__label">
-          <span class="nav-section__link__label--main">
-            {{ $helpers.resolvePath(item, propertyLabel, null) }}
+      <template v-else>
+        <NuxtLink
+          v-if="!item.external"
+          :key="index"
+          class="nav-section__link"
+          :class="{
+            'nav-section__link--has-img': $helpers.resolvePath(item, propertyImage, null),
+            'nav-section__link--has-img': $helpers.resolvePath(item, propertyCategory, null),
+            'nav-section__link--locked': $helpers.resolvePath(item, propertyLocked, null),
+            'nav-section__link--chevron': propertyChevron
+          }"
+          :style="[
+            (propertyImage) ? { backgroundImage: `url(${$helpers.normalizeImageUrl($helpers.resolvePath(item, propertyImage, null))})` } : undefined,
+            (propertyCategory) ? { backgroundImage: `url(${$helpers.getImageCategory($helpers.resolvePath(item, propertyCategory, null))})` } : undefined
+          ]"
+          :to="(!propertyRawLink) ? $helpers.getContentRoute(item, isNotification) : item.to"
+          :target="(propertyTargetLink && (item.target !== undefined)) ? item.target : undefined"
+        >
+          <span class="nav-section__link__label">
+            <span class="nav-section__link__label--main">
+              {{ $helpers.resolvePath(item, propertyLabel, null) }}
+            </span>
+            <span v-if="propertySubLabel" class="nav-section__link__label--sub">
+              {{ $helpers.getElapsedInterval($helpers.resolvePath(item, propertySubLabel, null)) }}
+            </span>
           </span>
-          <span v-if="propertySubLabel" class="nav-section__link__label--sub">
-            {{ $helpers.getElapsedInterval($helpers.resolvePath(item, propertySubLabel, null)) }}
+        </NuxtLink>
+        <a
+          v-else
+          :key="index"
+          class="nav-section__link"
+          :class="{
+            'nav-section__link--has-img': $helpers.resolvePath(item, propertyImage, null),
+            'nav-section__link--has-img': $helpers.resolvePath(item, propertyCategory, null),
+            'nav-section__link--locked': $helpers.resolvePath(item, propertyLocked, null),
+            'nav-section__link--chevron': propertyChevron
+          }"
+          :style="[
+            (propertyImage) ? { backgroundImage: `url(${$helpers.normalizeImageUrl($helpers.resolvePath(item, propertyImage, null))})` } : undefined,
+            (propertyCategory) ? { backgroundImage: `url(${$helpers.getImageCategory($helpers.resolvePath(item, propertyCategory, null))})` } : undefined
+          ]"
+          :href="(!propertyRawLink) ? $helpers.getContentRoute(item, isNotification) : item.to"
+          :target="(propertyTargetLink && (item.target !== undefined)) ? item.target : undefined"
+        >
+          <span class="nav-section__link__label">
+            <span class="nav-section__link__label--main">
+              {{ $helpers.resolvePath(item, propertyLabel, null) }}
+            </span>
+            <span v-if="propertySubLabel" class="nav-section__link__label--sub">
+              {{ $helpers.getElapsedInterval($helpers.resolvePath(item, propertySubLabel, null)) }}
+            </span>
           </span>
-        </span>
-      </NuxtLink>
+        </a>
+      </template>
     </template>
   </nav>
 </template>
@@ -103,6 +131,11 @@ export default {
       required: false
     },
     propertyTargetLink: {
+      type: Boolean,
+      default: false,
+      required: false
+    },
+    propertyExternalLink: {
       type: Boolean,
       default: false,
       required: false
@@ -170,18 +203,13 @@ export default {
         flex-direction: column;
         @include rem("margin-right", 10px);
 
-        &--main,
-        &--sub {
-          font-weight: 600;
-        }
-
         &--main {
           @include font-computed(20px, 26px);
           color: var(--contrast);
         }
 
         &--sub {
-          @include font-computed(12px, 12px, -0.3px);
+          @include font-computed(16px, 20px, -0.3px);
           @include rem("margin-top", 2.5px);
           @include rem("margin-right", 10px);
           color: var(--gray-4);

@@ -68,16 +68,26 @@ export default {
       ]
     }
   },
+  beforeMount () {
+    window.addEventListener('message', (event) => {
+      if (event.data.height) {
+        let iframe = document.getElementById('contentArticle');
+        iframe.height = event.data.height;
+      }
+    });
+  },
   mounted () {
     if (this.isNews) {
       return
     } else if (this.content.type !== undefined && this.content.type === 2) {
-      window.addEventListener('message', (event) => {
-        if (event.data.height) {
-          let iframe = document.getElementById('contentArticle');
-          iframe.height = event.data.height;
-        }
-      });
+      // window.addEventListener('message', (event) => {
+      //   console.log('addEventListener', event)
+      //   if (event.data.height) {
+      //     console.log('addEventListener', event.data.height)
+      //     let iframe = document.getElementById('contentArticle');
+      //     iframe.height = event.data.height;
+      //   }
+      // });
     } else {
       document.getElementById('contentArticle').querySelectorAll('h1').forEach(item => {
         item.addEventListener('click', event => {
@@ -134,6 +144,9 @@ export default {
         html = html.replace('%app_color', '#01826C'); // color-4
         html = html.replace('%input_bg_color', '#FAFBFC'); // gray-1
         html = html.replace('%input_stroke_color', '#D8D8D8'); // gray-3
+        html = html.replace('margin: 16px;', 'margin: 16px 3px 16px 1px;');
+        html = html.replace('word-break: break-all;', 'word-break: normal;');
+        html = html.replace('</style>','.group-title.group-title--small {font-weight: 400;}.inputs select, .inputs, .reference-container, hr {margin-left: 0; margin-right: 0;}</style>')
         html = html.replace('</head>', '<link rel="stylesheet" href="https://use.typekit.net/rhv4hzr.css"></head>');
         html = html.replace(/@media[\s\S]*?(prefers-color-scheme:[\s\S]*?dark)[\s\S]*?{[\s\S]*?}[\r\n]*?}/g, '')
         html = html.replace(/@font-face[\s\S]*?{[\s\S]*?}/g, '')
@@ -169,8 +182,8 @@ export default {
               window.parent.postMessage(msg, '*')
             });
             const resizeObserver = new ResizeObserver(entries => {
-              console.log('body.resize')
               var msg = { height: getPageHeight() }
+              console.log('body.resize', msg)
               window.parent.postMessage(msg, '*')
             });
             // start observing a DOM node

@@ -28,6 +28,7 @@
           property-chevron
           property-raw-link
           property-target-link
+          property-external-link
         />
         <b-button
           v-if="user"
@@ -49,9 +50,9 @@ export default {
   data () {
     return {
       links: [
-        { name: 'Suporte', to: `mailto:consultamaisrapida@grupoa.com.br?subject=Suporte App ${this.$store.state.theme.config.appName}&body=Olá, estou com dificuldades no meu app, poderiam me ajudar?`, target: '_BLANK' },
-        { name: 'Política de Privacidade', to: '#', target: '_BLANK' },
-        { name: 'Termos de Uso', to: '#', target: '_BLANK' }
+        { name: 'Suporte', to: `mailto:consultamaisrapida@grupoa.com.br?subject=Suporte App ${this.$store.state.theme.config.appName}&body=Olá, estou com dificuldades no meu app, poderiam me ajudar?`, target: '_BLANK', external: true },
+        { name: 'Política de Privacidade', to: 'politica-de-privacidade' },
+        { name: 'Termos de Uso', to: '/termos-de-uso' }
       ]
     }
   },

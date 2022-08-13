@@ -132,5 +132,25 @@ export const actions = {
         data.name = 'Conheça nossos autores'
         commit('SET_FULL', data)
       })
+  },
+  async loadPolicyPrivacy ({ commit }) {
+    const endpoint = this.$api.EndPoints.policyPrivacy
+    endpoint.id = config.policyPrivacy
+    await this.$api.request(endpoint, {})
+      .then((response) => {
+        const data = response.data
+        data.name = 'Política de privacidade'
+        commit('SET_FULL', data)
+      })
+  },
+  async loadTermsUse ({ commit }) {
+    const endpoint = this.$api.EndPoints.termsUse
+    endpoint.id = config.termsUse
+    await this.$api.request(endpoint, {})
+      .then((response) => {
+        const data = response.data
+        data.name = 'Termos de uso'
+        commit('SET_FULL', data)
+      })
   }
 }

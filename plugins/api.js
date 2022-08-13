@@ -102,7 +102,9 @@ export default function ({ $axios, redirect, store, $auth }, inject) {
     events: {},
     getFeatures: {},
     getReferredUsers: { id: null },
-    authors: {}
+    authors: {},
+    policyPrivacy: {},
+    termsUse: {}
   }
 
   api.getBaseUrl = function () {
@@ -157,6 +159,8 @@ export default function ({ $axios, redirect, store, $auth }, inject) {
       case api.EndPoints.getFeatures: return 'banners'
       case api.EndPoints.getReferredUsers: return `users/${this.endpoint.id}/referrals?version=2`
       case api.EndPoints.authors: return `pages/${this.endpoint.id}`
+      case api.EndPoints.policyPrivacy: return `pages/${this.endpoint.id}`
+      case api.EndPoints.termsUse: return `pages/${this.endpoint.id}`
       default: return ''
     }
   }

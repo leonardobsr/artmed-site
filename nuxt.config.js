@@ -4,6 +4,8 @@ export default {
   flavor: 'psi',
   emailFlavor: 'artmed+psi@artmed.com.br',
   authorId: 'a0a7158e-cca3-49d0-bdb9-5b521d72aaa7',
+  policyPrivacy: '4e6e55e6-87e8-445b-9a4e-638ec77d8b1f',
+  termsUse: '0c5dd273-7e7a-4d80-a7d9-4e2850e24d68',
   // Global page headers: https://go.nuxtjs.dev/config-head
   head: {
     title: 'Artmed+PSI',

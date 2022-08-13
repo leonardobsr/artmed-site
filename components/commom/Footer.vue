@@ -7,20 +7,12 @@
       <span class="footer-info__line footer-info__line--three">Parceiros</span>
       <b-img :src="require(`~/assets/images/marca_telessauders.png`)" width="150" height="114" />
     </div>
-    <b-modal v-if="showModal" id="modal-1" title="BootstrapVue">
-      <NuxtChild />
-    </b-modal>
   </footer>
 </template>
 
 <script>
 export default {
-  name: 'Footer',
-  computed: {
-    showModal () {
-      return this.$route.matched.length
-    }
-  }
+  name: 'Footer'
 }
 </script>
 

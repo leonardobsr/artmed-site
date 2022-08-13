@@ -53,11 +53,11 @@ export default {
     &::v-deep .logo {
       display: flex;
       justify-content: center;
-      @include rem("margin-bottom", 56px);
+      @include rem("margin-bottom", 46px);
     }
 
     &--small {
-      @include rem("padding-bottom", 20px);
+      @include rem("padding-bottom", 13px);
     }
   }
 </style>

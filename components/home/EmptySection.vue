@@ -29,7 +29,6 @@ export default {
   }
 
   .empty-section {
-    font-weight: 600;
     @include font-computed(18px, 30px);
     color: var(--gray-4);
     display: flex;

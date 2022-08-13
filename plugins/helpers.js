@@ -192,6 +192,9 @@ export default ({ app }, inject) => {
       if (value === undefined) { return }
       const category = app.store.state.categories.items.find(category => category.id === value)
       return (category !== undefined) ? this.normalizeImageUrl(category.image) : ''
+    },
+    sleep (ms) {
+      return new Promise(resolve => setTimeout(resolve, ms))
     }
   }
   inject('helpers', helpers)

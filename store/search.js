@@ -91,23 +91,30 @@ export const actions = {
     })
   },
 
-  async loadTypeAhead ({ commit }, searchTerm) {
+  async loadTypeAhead ({ commit, state }, searchTerm) {
     if (searchTerm === null || searchTerm === undefined) { return }
     const endpoint = this.$api.EndPoints.searchTypeAhead
     endpoint.term = searchTerm
+    if (state.selectedCategories.length > 0) {
+      const categories = state.selectedCategories.join(',')
+      endpoint.categories = categories
+    }
     await this.$api.request(endpoint)
       .then((response) => {
         commit('SET_TYPEAHEADLIST', response.data)
       })
   },
 
-  async loadSuggestion ({ commit }) {
+  async loadSuggestion ({ commit, state }) {
     const searchTerm = this.getters['search/SEARCHTERM']
     if (searchTerm === null || searchTerm === undefined) { return }
     commit('SET_SUGGESTIONS', [])
     const endpoint = this.$api.EndPoints.searchSuggestion
     endpoint.term = searchTerm
-    // const params = { term: searchTerm, categories: categoryFilter }
+    if (state.selectedCategories.length > 0) {
+      const categories = state.selectedCategories.join(',')
+      endpoint.categories = categories
+    }
     await this.$api.request(endpoint)
       .then((response) => {
         commit('SET_SUGGESTIONS', response.data)
@@ -115,14 +122,3 @@ export const actions = {
     // commit('SET_ISREQUESTING', false)
   }
 }
-
-// private var searchParams {
-//   var params: JSON = ["version" : 8, "search": searchTerm, "limit": limit, "start": skip]
-//   if let categories = filter?.selectedCategories, !categories.isEmpty {
-//       params["category"] = (categories.map { $0.id }).joined(separator: ",")
-//   }
-//   if let specialties = filter?.selectedSpecialties, !specialties.isEmpty {
-//       params["specialty"] = (specialties.map { $0.id }).joined(separator: ",")
-//   }
-//   return params
-// }

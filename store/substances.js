@@ -24,11 +24,14 @@ export const mutations = {
   },
   CLEAR_START (state) {
     state.start = 0
+  },
+  SET_ITEMDISABLED (state, status) {
+    state.items[status.index].disabled = status.value
   }
 }
 
 export const actions = {
-  load ({ commit, state }, { searchTerm, loadMore }) {
+  load ({ commit, state }, { searchTerm, loadMore, disabled = false }) {
     return new Promise((resolve, reject) => {
       commit('SET_SEARCHTERM', searchTerm)
       if (state.isRequesting) { return }
@@ -51,6 +54,10 @@ export const actions = {
       this.$api.request(endpoint, params)
         .then((response) => {
           const data = response.data
+          data.map((substance) => {
+            substance.disabled = disabled
+            return substance
+          })
           commit('SET_ITEMS', data)
           commit('SET_START', data.length)
           commit('SET_ISREQUESTING', false)

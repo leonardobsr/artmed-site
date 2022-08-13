@@ -20,7 +20,7 @@
           v-model="$v.searchTerm.$model"
           type="text"
           class="search__form-control"
-          placeholder="Pesquisar"
+          :placeholder="placeholder"
           debounce="300"
           aria-autocomplete="both"
           aria-haspopup="false"
@@ -116,6 +116,9 @@ export default {
     },
     typeAheadList () {
       return this.$store.state.search.typeAheadList
+    },
+    placeholder () {
+      return (this.$store.state.content.category) ? `Pesquisar em ${this.$store.state.content.category.name}` : 'Pesquisar'
     }
   },
   watch: {
@@ -173,15 +176,6 @@ export default {
         route = { name: 'busca-slug', params: { slug: this.$helpers.formatToSlug(this.searchTerm) }, query: { categorias: this.$router.currentRoute.params.id } }
       }
       this.$router.push(route)
-      // let route = { name: 'busca-slug', params: { slug: this.$helpers.formatToSlug(this.searchTerm) } }
-      // if (this.searchTerm === undefined || this.searchTerm === '') {
-      //   route = { name: 'busca' }
-      // }
-      // let route = { name: 'busca-slug', params: { slug: this.$helpers.formatToSlug(this.searchTerm) } }
-      // if (this.searchTerm === undefined || this.searchTerm === '') {
-      //   route = { name: 'busca' }
-      // }
-      // this.$router.push(route)
     }
   }
 }
@@ -201,30 +195,33 @@ export default {
     }
 
     &__input-group {
-      border: 1.4px solid var(--three);
+      border: 1px solid var(--three);
       box-shadow: none;
       @include rem("border-radius", 12px);
       z-index: 3;
-      @include rem("height", 50px);
       margin: 0 auto;
 
-      &__btn {
-        // display: inline-block;
-        // height: auto;
-        // @include rem("font-size", 16.8px);
-        display: flex;
-        height: 22px;
-        // @include rem("margin", 19px 12px 19px 20px);
+      & .input-group-prepend,
+      & .input-group-append {
+        align-items: center;
+      }
 
-        &--icon,
+      &__btn {
+        display: inline-block;
+        height: auto;
+        @include rem("font-size", 16.8px);
+        display: flex;
+        height: 20px;
+        @include rem("margin-left", 12px);
+
         &--clear {
           padding: 0;
         }
 
         &--icon {
           &::v-deep svg {
-            @include rem("width", 22px);
-            @include rem("height", 22px);
+            @include rem("width", 20px);
+            @include rem("height", 20px);
             path {
               fill: var(--three);
             }
@@ -232,34 +229,24 @@ export default {
         }
 
         &--clear {
-          @include rem("font-size", 32px);
-          @include rem("margin", 9px 8px 5px 8px);
-        }
-      }
-
-      &--small {
-        @include rem("height", 56px);
-
-        & .search__input-group__btn--icon {
-          @include rem("margin", 15px 12px 13px 20px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          @include rem("width", 20px);
+          @include rem("height", 20px);
+          @include rem("font-size", 26px);
+          @include rem("margin", 0);
+          @include rem("margin-right", 10px);
         }
 
-        & .search__input-group__btn--clear {
-          @include rem("margin", 4px 8px 2px 8px);
-        }
-
-        & .search__input-group__btn--search {
+        &--search {
+          display: flex;
+          align-items: center;
           color: var(--background-fill);
           background: var(--three);
-          margin: 0;
+          @include rem("height", 50px);
           @include rem("border-top-right-radius", 10px);
           @include rem("border-bottom-right-radius", 10px);
-          @include rem("padding-left", 28px);
-          @include rem("padding-right", 28px);
-        }
-
-        & .search__form-control {
-          // @include rem("margin-top", 2px);
         }
       }
 
@@ -267,6 +254,20 @@ export default {
         border-bottom: none;
         border-bottom-left-radius: 0;
         border-bottom-right-radius: 0;
+
+        & .search__sugestion-box__divider {
+          @include rem("margin", 0 7px 0 20px);
+        }
+      }
+
+      & .input-group {
+        align-items: center;
+      }
+
+      &:not(.search__input-group--small) {
+        @include media-breakpoint-up(sm) {
+          @include rem("margin-bottom", 30px);
+        }
       }
     }
 
@@ -277,26 +278,20 @@ export default {
       outline: none;
       -webkit-tap-highlight-color: transparent;
       // @include rem("margin-top", 6px);
-      padding: 0;
+      // padding: 0;
       font-weight: 400;
-      @include font-computed(25px, 32px);
+      @include font-computed(24px, 24px);
 
       &::-webkit-input-placeholder { /* Edge */
         color: var(--three);
-        font-weight: 400;
-        @include font-computed(25px, 38px);
       }
 
       &:-ms-input-placeholder { /* Internet Explorer 10-11 */
         color: var(--three);
-        font-weight: 400;
-        @include font-computed(25px, 38px);
       }
 
       &::placeholder {
         color: var(--three);
-        font-weight: 400;
-        @include font-computed(25px, 38px);
       }
 
       &:focus {
@@ -321,7 +316,7 @@ export default {
       list-style-type: none;
       margin: 0;
       padding: 0;
-      border: 1.4px solid var(--three);
+      border: 1px solid var(--three);
       @include rem("border-radius", 0 0 12px 12px);
       @include rem("padding-bottom", 4px);
       overflow: hidden;
@@ -330,8 +325,8 @@ export default {
       border-top: none;
 
       &__divider {
-        border: 1px solid var(--three);
-        @include rem("margin", 0 20px 0 20px);
+        border-bottom: 1px solid var(--three);
+        @include rem("margin", 0 7px 0 20px);
       }
 
       &__list {
@@ -360,11 +355,11 @@ export default {
           -webkit-mask-image: url("~/assets/images/icon_search.svg");
           mask-image: url("~/assets/images/icon_search.svg");
           background-color: #000000;
-          @include rem("background-size", 22px);
-          @include rem("min-height", 22px);
-          @include rem("min-width", 22px);
-          @include rem("height", 22px);
-          @include rem("width", 22px);
+          @include rem("background-size", 20px);
+          @include rem("min-height", 20px);
+          @include rem("min-width", 20px);
+          @include rem("height", 20px);
+          @include rem("width", 20px);
           display: flex;
           align-items: center;
           @include rem("margin", 0 13px 0 6px);
@@ -375,7 +370,7 @@ export default {
           flex: auto;
           flex-direction: column;
           min-width: 0;
-          @include rem("padding", 6px 0);
+          @include rem("padding", 3px 0);
         }
 
         &-text {
@@ -385,10 +380,10 @@ export default {
           @include rem("padding-right", 8px);
 
           &__line {
-            font-weight: 600;
+            font-weight: 400;
             word-break: break-word;
             color: #212121;
-            @include font-computed(25px, 32px);
+            @include font-computed(20px,24px);
           }
         }
 

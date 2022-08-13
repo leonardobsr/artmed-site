@@ -1,7 +1,9 @@
 <template>
   <div class="commom-navbar-container" :class="classModContainer">
     <div class="commom-navbar__logo" :class="classModLogo">
-      <CommomLogo class="d-lg-none" />
+      <CommomLogo
+        :class="{ 'd-lg-none': isIndex }"
+      />
     </div>
     <nav class="nav justify-content-end commom-navbar">
       <template v-for="(menu, index) in menus">
@@ -77,7 +79,7 @@ export default {
     &--index {
       // justify-content: flex-end;
       @include media-breakpoint-up(sm) {
-        @include rem("margin-bottom", 80px);
+        @include rem("margin-bottom", 60px);
       }
     }
   }

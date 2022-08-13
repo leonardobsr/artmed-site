@@ -84,7 +84,6 @@ export default {
           @include rem("padding", 10px 12px);
 
           & .card-title {
-            font-weight: 600;
             @include font-computed(16px, 20px);
             /* Light/contrast color */
             color: var(--contrast);

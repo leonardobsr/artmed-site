@@ -11,7 +11,10 @@
         class="calc__header-container__selected-substances"
       >
         <b-list-group>
-          <b-list-group-item v-for="(substance, index) in selectedSubstances" :key="index">
+          <b-list-group-item
+            v-for="(substance, index) in selectedSubstances"
+            :key="index"
+          >
             {{ substance.name }}
             <b-button
               variant="link"
@@ -54,6 +57,7 @@
         <b-button
           v-b-modal.drug-select
           variant="link"
+          class="calc__result__btn-new-search"
           @click.prevent="unsellectAll()"
         >
           Nova pesquisa
@@ -143,9 +147,10 @@
               v-model="selected"
               :options="Substances"
               :aria-describedby="ariaDescribedby"
-              name="flavour-1"
+              name="drugs-1"
               value-field="id"
               text-field="name"
+              disabled-field="disabled"
               stacked
             />
           </b-form-group>
@@ -177,7 +182,8 @@ export default {
       showClear: false,
       selected: [],
       selectedSubstances: [],
-      searched: false
+      searched: false,
+      isDisabled: false
     }
   },
   async fetch () {
@@ -224,12 +230,16 @@ export default {
     },
     selected: {
       handler (val, oldVal) {
-        for (let index = 0; index < this.$store.state.substances.items.length; index++) {
-          if (val.includes(this.$store.state.substances.items[index].id)) {
-            if (!this.selectedSubstances.includes(this.$store.state.substances.items[index])) {
-              this.selectedSubstances.push(this.$store.state.substances.items[index])
-            }
+        if (val.length > 6) {
+          this.setDisabled(val)
+        } else if (val.length > 0 && val.length <= 6) {
+          this.$router.push({ query: { ...this.$route.query, substancias: val.join(',') } })
+          this.setDisabled(val)
+        } else {
+          if (this.$route.query.substancias !== undefined) {
+            this.$router.replace({ query: {} })
           }
+          this.setDisabled(val)
         }
       },
       deep: true
@@ -245,7 +255,43 @@ export default {
       minLength: minLength(1)
     }
   },
+  mounted () {
+    this.checkQuerySubstancesInHistory()
+  },
   methods: {
+    checkQuerySubstancesInHistory () {
+      const querySubstances = this.$route.query.substancias?.split(',') ?? []
+      const historySubstances = JSON.parse(localStorage.getItem('selectedSubstances')) ?? []
+      this.selected = querySubstances
+      if (querySubstances.length > 0) {
+        for (const substances of historySubstances) {
+          if (!this.selected.includes(substances.id)) {
+            this.selected.push(substances.id)
+          }
+          this.selectedSubstances.push(substances)
+        }
+      } else {
+        localStorage.removeItem('selectedSubstances')
+      }
+    },
+    setDisabled (selected) {
+      if (selected.length >= 6) {
+        this.isDisabled = true
+      } else if (selected.length < 6 && this.isDisabled) {
+        this.isDisabled = false
+      }
+      for (let index = 0; index < this.$store.state.substances.items.length; index++) {
+        if (!selected.includes(this.$store.state.substances.items[index].id)) {
+          const indexl = this.selectedSubstances.indexOf(this.$store.state.substances.items[index])
+          if (indexl > -1) {
+            this.selectedSubstances.splice(indexl, 1)
+          }
+          this.$store.commit('substances/SET_ITEMDISABLED', { index, value: this.isDisabled })
+        } else if (!this.selectedSubstances.includes(this.$store.state.substances.items[index])) {
+          this.selectedSubstances.push(this.$store.state.substances.items[index])
+        }
+      }
+    },
     clear () {
       this.$store.commit('substances/SET_SEARCHTERM', '')
     },
@@ -258,7 +304,7 @@ export default {
       loadDrugGuideline: 'drugGuideline/load'
     }),
     infiniteHandler ($state) {
-      this.load({ searchTerm: '', loadMore: true })
+      this.load({ searchTerm: '', loadMore: true, disabled: (this.selected.length >= 6) })
         .then((data) => {
           if (data.length > 0) {
             $state.loaded()
@@ -270,12 +316,13 @@ export default {
     loadDrugGuide (ids) {
       this.loadDrugGuideline({ ids })
         .then(() => {
+          localStorage.setItem('selectedSubstances', JSON.stringify(this.selectedSubstances))
           this.searched = true
         })
     },
     removeDrug (drug) {
       const index = this.selected.indexOf(drug.id)
-      if (index > -1) {
+      if (index >= 0) {
         this.selectedSubstances.splice(index, 1)
         this.selected.splice(index, 1)
       }
@@ -303,6 +350,7 @@ export default {
       @include rem("min-height", 64px);
       padding-right: 1.5rem;
       width: 100%;
+      cursor: pointer;
       &:first-child {
         border-top-left-radius: 6px;
         border-top-right-radius: 6px;
@@ -311,7 +359,11 @@ export default {
         border-bottom-left-radius: 6px;
         border-bottom-right-radius: 6px;
       }
+      .custom-control-input {
+        cursor: pointer;
+      }
       .custom-control-label {
+        cursor: pointer;
         width: calc(100% - 1.5rem);
         &::before,
         &::after {
@@ -404,6 +456,7 @@ export default {
         .btn-link {
           padding-right: 0;
           color: var(--three);
+          box-shadow: none;
         }
       }
       &__drugs-guideline {
